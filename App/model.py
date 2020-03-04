@@ -69,43 +69,7 @@ def addBookMap (catalog, row):
     catalog['booksTree']  = map.put(catalog['booksTree'] , book['title'], book, greater)
 
 
-def newAuthor (name, row):
-    """
-    Crea una nueva estructura para modelar un autor y sus libros
-    """
-    author = {'name':"", "authorBooks":None,  "sum_average_rating":0}
-    author ['name'] = name
-    author['sum_average_rating'] = float(row['average_rating'])
-    author ['authorBooks'] = lt.newList('SINGLE_LINKED')
-    lt.addLast(author['authorBooks'],row['book_id'])
-    return author
-
-def addAuthor (catalog, name, row):
-    """
-    Adiciona un autor al map y sus libros
-    """
-    if name:
-        authors = catalog['authors']
-        author=map.get(authors,name,compareByKey)
-        if author:
-            lt.addLast(author['authorBooks'],row['book_id'])
-            author['sum_average_rating'] += float(row['average_rating'])
-        else:
-            author = newAuthor(name, row)
-            map.put(authors, author['name'], author, compareByKey)
-
-
 # Funciones de consulta
-
-
-def getBookInList (catalog, bookTitle):
-    """
-    Retorna el libro desde la lista a partir del titulo
-    """
-    pos = lt.isPresent(catalog['booksList'], bookTitle, compareByTitle)
-    if pos:
-        return lt.getElement(catalog['booksList'],pos)
-    return None
 
 
 def getBookMap (catalog, bookTitle):
@@ -126,12 +90,6 @@ def selectBookMap (catalog, pos):
     """
     return map.select(catalog['booksTree'], pos) 
 
-
-def getAuthorInfo (catalog, authorName):
-    """
-    Retorna el autor a partir del nombre
-    """
-    return map.get(catalog['authors'], authorName, compareByKey)
 
 # Funciones de comparacion
 
