@@ -177,7 +177,7 @@ def minKey (rbt):
     Retorna la menor llave de la tabla de simbolos 
     """
     if (rbt['left'] == None): 
-        return rbt; 
+        return rbt
     else:                
         return minKey(rbt['left'])
 
@@ -189,7 +189,7 @@ def maxKey (rbt):
     Retorna la mayor llave de la tabla de simbolos 
     """
     if (rbt['right'] == None): 
-        return rbt; 
+        return rbt
     else:                
         return maxKey(rbt['right'])
 
@@ -229,7 +229,7 @@ def floor (rbt, key, comparefunction):
         return rbt
     if (cmp <  0):
         return floor (rbt['left'], key, comparefunction)
-    t = floor(rbt['right'], key, comparefunction); 
+    t = floor(rbt['right'], key, comparefunction) 
     if (t != None):
         return t
     else:
@@ -237,28 +237,60 @@ def floor (rbt, key, comparefunction):
 
 
 
-
 def ceiling (rbt, key, comparefunction):
     """
-    Retorna la llave mas pequeña en la tabla de simbolos, mayor o igual a la llave key 
-    """ 
-    pass
+    Retorna la llave mas pequeña en la tabla de simbolos, mayor o igual a la llave key
+    """
+    if (rbt == None):
+        return None
+
+    cmp = comparefunction (key, rbt['key'])
+
+    if (cmp == 0):
+        return rbt
+    if (cmp <  0):
+        t = ceiling (rbt['left'], key, comparefunction)
+        if (t != None):
+            return t
+        else:
+            return rbt
+    return ceiling (rbt['right'], key, comparefunction)
 
 
 
 def select (rbt, k):
     """
     Retorna la k-esima llave mas pequeña de la tabla
-    """ 
-    pass
+    """
+    if (rbt == None):
+        return None
+    t = 0
+    if rbt['left'] != None:
+        t = rbt['left']['size']
 
+    if  (t > k):
+        return select(rbt['left'], k)
+    elif (t < k):
+        return select(rbt['right'], k-t-1)
+    else:
+        return rbt
 
 
 def rank (rbt, key, comparefunction):
     """
     Retorna el número de llaves en la tabla estrictamente menores que key
     """
-    pass
+    if (rbt == None):
+        return 0
+    cmp = comparefunction (key, rbt['key'])
+
+    if  (cmp < 0):
+        return rank (rbt['left'], key, comparefunction)
+    elif (cmp > 0): 
+        return 1 + size(rbt['left']) + rank(rbt['right'], key, comparefunction)
+    else:
+        return size(rbt['left'])
+
 
 
 def height (rbt):

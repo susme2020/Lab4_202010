@@ -162,8 +162,9 @@ class EntryMapTest (unittest.TestCase):
         bst.put (tree, '7', 'Title 7', self.comparekeys)
         bst.put (tree, '28', 'Title 28', self.comparekeys)
 
-        node = bst.select (tree, 2)
-        print (node['key'])
+        node = bst.select (tree, 1)
+        #assert ??
+        print ("select 1:",node['key'])
 
 
     def test_BSTRank (self):
@@ -186,9 +187,10 @@ class EntryMapTest (unittest.TestCase):
         bst.put (tree, '7', 'Title 7', self.comparekeys)
         bst.put (tree, '28', 'Title 28', self.comparekeys)
 
-        total = bst.rank (tree, '30', self.comparekeys)
-        print (total)
+        rank = bst.rank (tree, '30', self.comparekeys)
+        print ("rank 30: ",rank)
 
+        #assert ??
 
 
     def test_BSTKeySet (self):

@@ -49,7 +49,7 @@ def newBook (row):
     """
     Crea una nueva estructura para almacenar los actores de una pelicula 
     """
-    book = {"book_id": row['book_id'], "title":row['original_title'], "average_rating":row['average_rating'], "ratings_count":row['ratings_count']}
+    book = {"book_id": row['book_id'], "title":row['title'], "average_rating":row['average_rating'], "ratings_count":row['ratings_count']}
     return book
 
 def addBookList (catalog, row):
@@ -114,11 +114,17 @@ def getBookMap (catalog, bookTitle):
     """
     return map.get(catalog['booksTree'], bookTitle, greater)
 
-def floorBookMap (catalog, bookTitle):
+def rankBookMap (catalog, bookTitle):
     """
-    Retorna el libro con la operacion floor desde el mapa a partir del titulo (key)
+    Retorna la cantidad de llaves menores (titulos) dentro del arbol
     """
-    return map.floor(catalog['booksTree'], bookTitle, greater)
+    return map.rank(catalog['booksTree'], bookTitle, greater)
+
+def selectBookMap (catalog, pos):
+    """
+    Retorna la operación select (titulos) dentro del arbol
+    """
+    return map.select(catalog['booksTree'], pos) 
 
 
 def getAuthorInfo (catalog, authorName):

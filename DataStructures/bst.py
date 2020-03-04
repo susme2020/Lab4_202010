@@ -190,7 +190,7 @@ def minKey (bst):
     Retorna la menor llave de la tabla de simbolos 
     """
     if (bst['left'] == None): 
-        return bst; 
+        return bst
     else:                
         return minKey(bst['left'])
 
@@ -201,7 +201,7 @@ def maxKey (bst):
     Retorna la mayor llave de la tabla de simbolos 
     """
     if (bst['right'] == None): 
-        return bst; 
+        return bst
     else:                
         return maxKey(bst['right'])
 
@@ -252,7 +252,7 @@ def floor (bst, key, comparefunction):
         return bst
     if (cmp <  0):
         return floor (bst['left'], key, comparefunction)
-    t = floor(bst['right'], key, comparefunction); 
+    t = floor(bst['right'], key, comparefunction)
     if (t != None):
         return t
     else:
@@ -273,7 +273,7 @@ def ceiling (bst, key, comparefunction):
     if (cmp == 0): 
         return bst
     if (cmp <  0):
-        t = ceiling (bst['left'], key, comparefunction); 
+        t = ceiling (bst['left'], key, comparefunction)
         if (t != None):
             return t
         else:
@@ -287,10 +287,8 @@ def select (bst, k):
     """
     Retorna la k-esima llave mas pequeña de la tabla
     """ 
-    
     if (bst == None):
-        return None; 
-
+        return None
     t = 0
     if bst['left'] != None: 
         t = bst['left']['size']
@@ -300,7 +298,7 @@ def select (bst, k):
     elif (t < k):
         return select(bst['right'], k-t-1)
     else:
-        return bst; 
+        return bst
 
 
 

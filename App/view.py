@@ -41,8 +41,8 @@ def printMenu():
     print("Bienvenido al Laboratorio 3")
     print("1- Cargar información")
     print("2- Buscar libro por titulo")
-    print("3- Buscar libro aproximado (floor) por titulo ...")
-    print("4- Requerimiento 3 ...")
+    print("3- Buscar cuantos libros hay alfabeticamente menores a un titulo (rank)")
+    print("4- Buscar por posición del titulo del libro (select)")
     print("0- Salir")
 
 
@@ -87,15 +87,17 @@ def main():
                 print("Libro No encontrado")    
 
         elif int(inputs[0])==3:
-            title = input("Nombre del titulo a buscar (floor): ")
-            floorKey = controller.floorBookMap(catalog,title) 
-            if floorKey:
-                print("Libro encontrado (floor):",floorKey['key'])
-            else:
-                print("Libro No encontrado")    
+            title = input("Nombre del titulo a buscar (rank): ")
+            rank = controller.rankBookMap(catalog,title)
+            print("Hay ",rank," titulos menores (rank) que "+title)
         elif int(inputs[0])==4:
-            label = input (" ")
-            pass
+            pos = int(input("Posición del k-esimo titulo del libro (select) a obtener: "))
+            book = controller.selectBookMap(catalog, pos)
+            if book:
+                print("Libro en posición:",pos,":",book['value']['title'],book['value']['average_rating'])
+            else:
+                print("Libro no encotrado en posicion: ",pos)
+
         else:
             sys.exit(0)
     sys.exit(0)
