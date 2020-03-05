@@ -38,24 +38,24 @@ operación solicitada
 
 
 def printMenu():
-    print("Bienvenido al Laboratorio 3")
+    print("Bienvenido al Laboratorio 4")
     print("1- Cargar información")
-    print("2- Buscar libro por titulo")
-    print("3- Buscar cuantos libros hay alfabeticamente menores a un titulo (rank)")
-    print("4- Buscar por posición del titulo del libro (select)")
+    print("2- Buscar libro por llave (titulo) ")
+    print("3- Consultar cuantos libros hay alfabeticamente menores a una llave (titulo) - (rank)")
+    print("4- Buscar un libro por posición de la llave (titulo) - (select)")
     print("0- Salir")
 
 
 def initCatalog ():
     """
-    Inicializa el catalogo de peliculas
+    Inicializa el catalogo
     """
     return controller.initCatalog()
 
 
 def loadData (catalog):
     """
-    Carga las peliculas en la estructura de datos
+    Carga los libros en la estructura de datos
     """
     controller.loadData(catalog)
 
@@ -70,13 +70,12 @@ def main():
         if int(inputs[0])==1: 
 
             print("Cargando información de los archivos ....")
-            print("recursion:",sys.getrecursionlimit())
+            print("Recursion Limit:",sys.getrecursionlimit())
             catalog = initCatalog ()
             loadData (catalog)
             print ('Arbol Libros cargados: ' + str(map.size(catalog['booksTree'])))
             print ('Lista libros cargados: ' + str(lt.size(catalog['booksList'])))
             print ('Altura arbol: ' + str(map.height(catalog['booksTree'])))
-            
             
         elif int(inputs[0])==2:
             title = input("Nombre del titulo a buscar: ")

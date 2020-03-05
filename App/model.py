@@ -39,7 +39,7 @@ def newCatalog():
     Inicializa el catálogo y retorna el catalogo inicializado.
     """
     catalog = {'booksTree':None,'booksList':None}
-    catalog['booksTree'] = map.newMap ()
+    catalog['booksTree'] = map.newMap ("BST")
     catalog['booksList'] = lt.newList("ARRAY_LIST")
 
     return catalog
@@ -47,7 +47,7 @@ def newCatalog():
 
 def newBook (row):
     """
-    Crea una nueva estructura para almacenar los actores de una pelicula 
+    Crea una nueva estructura para almacenar un libro 
     """
     book = {"book_id": row['book_id'], "title":row['title'], "average_rating":row['average_rating'], "ratings_count":row['ratings_count']}
     return book
@@ -65,7 +65,7 @@ def addBookMap (catalog, row):
     Adiciona libro al map con key=title
     """
     book = newBook(row)
-    #catalog['booksTree'] = map.put(books, int(book['book_id']), book, greater)
+    #catalog['booksTree'] = map.put(catalog['booksTree'], int(book['book_id']), book, greater)
     catalog['booksTree']  = map.put(catalog['booksTree'] , book['title'], book, greater)
 
 

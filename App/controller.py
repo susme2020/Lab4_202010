@@ -113,7 +113,7 @@ def rankBookMap(catalog, bookTitle):
 
 def selectBookMap(catalog, pos):
     t1_start = process_time() #tiempo inicial
-    key=model.selectBookMap(catalog, pos) 
+    rank=model.selectBookMap(catalog, pos) 
     t1_stop = process_time() #tiempo final
-    print("Tiempo de ejecución buscar libro (select):",t1_stop-t1_start," segundos")   
-    return key
+    print("Tiempo de ejecución buscar libro (rank):",t1_stop-t1_start," segundos")   
+    return rank

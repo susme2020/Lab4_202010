@@ -46,31 +46,27 @@ def put (bst, key , value, comparefunction, level=0):
     """
 
     #El arbol esta vacio y se crea la raiz
-    try:
-        if (bst['key'] == None):
-            bst['key'] = key
-            bst['value'] = value
-            bst['size'] = 1
-            return bst
+    if (bst['key'] == None):
+        bst['key'] = key
+        bst['value'] = value
+        bst['size'] = 1
+        return bst
 
-        #La funcion de comparación indica la relación de orden entre las llaves    
-        cmp = comparefunction (key, bst['key'])
-        if (cmp < 0):                                            #La llave a insertar es menor que la raiz
-            if (bst['left'] == None):  
-                bst['left'] = node.newNode (key, value, 1)
-            else:
-                bst['left'] = put (bst['left'], key, value, comparefunction, level=level+1)
-        elif (cmp > 0):                                           #La llave a insertar es mayo que la raiz
-            if (bst['right'] == None):
-                bst['right'] = node.newNode (key, value, 1)
-            else:
-                bst['right']  = put (bst['right'], key, value, comparefunction, level=level+1)
-        else:                                                      #La llave a insertar es igual que la raiz
-            bst['value'] = value
-        bst['size'] = 1 + size(bst['left']) + size (bst['right'])
-    except:
-        print("Recursion error at level:",level," key:", key)
-        sys.exit(0)
+    #La funcion de comparación indica la relación de orden entre las llaves    
+    cmp = comparefunction (key, bst['key'])
+    if (cmp < 0):                                            #La llave a insertar es menor que la raiz
+        if (bst['left'] == None):  
+            bst['left'] = node.newNode (key, value, 1)
+        else:
+            bst['left'] = put (bst['left'], key, value, comparefunction, level=level+1)
+    elif (cmp > 0):                                           #La llave a insertar es mayo que la raiz
+        if (bst['right'] == None):
+            bst['right'] = node.newNode (key, value, 1)
+        else:
+            bst['right']  = put (bst['right'], key, value, comparefunction, level=level+1)
+    else:                                                      #La llave a insertar es igual que la raiz
+        bst['value'] = value
+    bst['size'] = 1 + size(bst['left']) + size (bst['right'])
     return bst
 
 
