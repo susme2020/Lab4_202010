@@ -40,9 +40,9 @@ operación solicitada
 def printMenu():
     print("Bienvenido al Laboratorio 4")
     print("1- Cargar información")
-    print("2- Buscar libro por llave (titulo) ")
-    print("3- Consultar cuantos libros hay alfabeticamente menores a una llave (titulo) - (rank)")
-    print("4- Buscar un libro por posición de la llave (titulo) - (select)")
+    print("2- Buscar accidente por llave (fecha)")
+    print("3- Consultar cuantos accidentes hubo antes a una fecha - (rank)")
+    print("4- Consultar accidente por posición")
     print("0- Salir")
 
 
@@ -55,47 +55,87 @@ def initCatalog ():
 
 def loadData (catalog):
     """
-    Carga los libros en la estructura de datos
+    Carga los datos en la estructura de datos
     """
     controller.loadData(catalog)
 
+def pedir_fecha():
+    anio = int(input("Año del accidente: "))
+    mes = int(input("Mes(#) del accidente: "))
+    if mes < 10:
+        mes = "0"+str(mes)
+    dia = int(input("Día(#) del accidente: "))
+    if dia < 10:
+        dia = "0"+str(dia)
+    hora = int(input("Hora (en formato militar): "))
+    if hora < 10:
+        hora = "0"+str(hora)
+    minuto = int(input("Minuto: "))
+    if minuto < 10:
+        minuto = "0"+str(minuto)
+    segundo = int(input("Segundo: "))
+    if segundo < 10:
+        segundo = "0"+str(segundo)
+    fecha = str(anio)+"-"+str(mes)+"-"+str(dia)+str(hora)+":"+str(minuto)+":"+str(segundo)
+    fecha = controller.sacarfecha(fecha)
+    return fecha
 
 """
 Menu principal
 """
 def main():
+    datos_cargados = False
     while True:
         printMenu() 
         inputs =input('Seleccione una opción para continuar\n')
-        if int(inputs[0])==1: 
+        if int(inputs[0])==1: # 1- Cargar información
 
             print("Cargando información de los archivos ....")
             print("Recursion Limit:",sys.getrecursionlimit())
             catalog = initCatalog ()
             loadData (catalog)
+            """
             print ('Arbol Libros cargados: ' + str(map.size(catalog['booksTree'])))
             print ('Lista libros cargados: ' + str(lt.size(catalog['booksList'])))
             print ('Altura arbol: ' + str(map.height(catalog['booksTree'])))
-            
-        elif int(inputs[0])==2:
-            title = input("Nombre del titulo a buscar: ")
-            book = controller.getBookMap(catalog,title)
-            if book:
-                print("Libro encontrado:",book['title'],book['average_rating'])
-            else:
-                print("Libro No encontrado")    
+            """
+            print ('Arbol Accidentes cargados: ' + str(map.size(catalog['accidentsTree'])))
+            print ('Lista Accidentes cargados: ' + str(lt.size(catalog['accidentsList'])))
+            print ('Altura arbol: ' + str(map.height(catalog['accidentsTree'])))
 
-        elif int(inputs[0])==3:
-            title = input("Nombre del titulo a buscar (rank): ")
-            rank = controller.rankBookMap(catalog,title)
-            print("Hay ",rank," titulos menores (rank) que "+title)
-        elif int(inputs[0])==4:
-            pos = int(input("Posición del k-esimo titulo del libro (select) a obtener: "))
-            book = controller.selectBookMap(catalog, pos)
-            if book:
-                print("Libro en posición:",pos,":",book['value']['title'],book['value']['average_rating'])
+            datos_cargados = True
+            
+        elif int(inputs[0])==2: # 2- Buscar accidente por llave (fecha)
+            if datos_cargados:
+                fecha = pedir_fecha()
+                accidente = controller.getAccidentMap(catalog,fecha)
+
+                if accidente:
+                    print("Accidente encontrado:\nID: ", accidente["accident_id"], "\nTiempo de inicio: ", accidente["start_time"], "\nTiempo de finalización: ", accidente["end_time"], "\nSeveridad tipo ", accidente["severity"], "\nLatitud ", accidente["start_lat"], "\nLongitud ", accidente["start_lng"])
+                else:
+                    print("Accidente No encontrado")
             else:
-                print("Libro no encotrado en posicion: ",pos)
+                print("No ha cargado los datos")    
+
+        elif int(inputs[0])==3: # 3- Consultar cuantos accidentes hubo antes a una fecha - (rank)
+            if datos_cargados:
+                print("Para consultar tiene que ingresar una fecha")
+                fecha = pedir_fecha()
+                rank = controller.rankAccidentMap(catalog,fecha)
+                print("Ocurrieron ", rank, " accidentes antes (rank) de la fecha ingresada")
+            else:
+                print("No ha cargado los datos")
+
+        elif int(inputs[0])==4:
+            if datos_cargados:
+                pos = int(input("Posición del k-esimo accidente del mapa (select) a obtener: "))
+                accidente = controller.selectAccidentMap(catalog, pos)
+                if accidente:
+                    print("Accidente en posición:",pos,":\nID: ", accidente["accident_id"], "\nTiempo de inicio: ", accidente["start_time"], "\nTiempo de finalización: ", accidente["end_time"], "\nSeveridad tipo ", accidente["severity"], "\nLatitud : ", accidente["start_lat"], "\nLongitud : ", accidente["start_lng"])
+                else:
+                    print("Accidente no encotrado en posicion: ",pos)
+            else:
+                print("No ha cargado los datos")
 
         else:
             sys.exit(0)
