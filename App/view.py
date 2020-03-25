@@ -44,6 +44,7 @@ def printMenu():
     print("2- Buscar accidente por llave (fecha)")
     print("3- Consultar cuantos accidentes hubo antes a una fecha - (rank)")
     print("4- Consultar accidente por posición")
+    print("5- Consultar total de accidentes ocurridos en una fecha específica. Estos totales se presentarán divididos entre las diferentes severidades de accidente posibles (1 - 4) y se mostrará la ciudad más accidentada por severidad en la fecha dada.") 
     print("0- Salir")
 
 
@@ -128,7 +129,7 @@ def main():
             else:
                 print("No ha cargado los datos")
 
-        elif int(inputs[0])==4:
+        elif int(inputs[0])==4: # 4- Consultar accidente por posición
             if datos_cargados:
                 pos = int(input("Posición del k-esimo accidente del mapa (select) a obtener: "))
                 accidente = controller.selectAccidentMap(catalog, pos)
@@ -136,6 +137,29 @@ def main():
                     print("Accidente en posición:",pos,":\nID: ", accidente["accident_id"], "\nTiempo de inicio: ", accidente["start_time"], "\nTiempo de finalización: ", accidente["end_time"], "\nSeveridad tipo ", accidente["severity"], "\nLatitud : ", accidente["start_lat"], "\nLongitud : ", accidente["start_lng"])
                 else:
                     print("Accidente no encotrado en posicion: ",pos)
+            else:
+                print("No ha cargado los datos")
+
+        elif int(inputs[0])==5: # 5- Consultar total de accidentes ocurridos en una fecha específica. Estos totales se presentarán divididos entre las diferentes severidades de accidente posibles (1 - 4) y se mostrará la ciudad más accidentada por severidad en la fecha dada.
+            if datos_cargados:
+                print("Para ejecutar esta opción debe proporcionar una fecha (año, mes, día). Esta fecha debe estar dentro del rango de años de los datos cargados. No tiene ingresar datos de hora, minuto o segundo ya que no se tendrán en cuenta.")
+                fecha = (pedir_fecha()-18000)//86400
+                
+                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
+                print("SEVERIDAD 1")
+                print("Para la severidad 1 se presentaron ", catalog["accidentsByDate"][fecha][1]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][1]["ciudad_mas_accidentada"])
+
+                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
+                print("SEVERIDAD 2")
+                print("Para la severidad 2 se presentaron ", catalog["accidentsByDate"][fecha][2]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][2]["ciudad_mas_accidentada"])
+
+                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
+                print("SEVERIDAD 3")
+                print("Para la severidad 3 se presentaron ", catalog["accidentsByDate"][fecha][3]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][3]["ciudad_mas_accidentada"])
+
+                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
+                print("SEVERIDAD 4")
+                print("Para la severidad 4 se presentaron ", catalog["accidentsByDate"][fecha][4]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][4]["ciudad_mas_accidentada"])
             else:
                 print("No ha cargado los datos")
 

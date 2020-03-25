@@ -46,18 +46,16 @@ def newCatalog():
     catalog['booksList'] = lt.newList("ARRAY_LIST")
 
     """
-    catalog = {'accidentsTree':None,'accidentsList':None}
+    catalog = {'accidentsTree':None,'accidentsList':None, "accidentsHash": None, 'accidentsByDate':None}
     catalog['accidentsTree'] = map.newMap ("RBT")
     catalog['accidentsList'] = lt.newList("ARRAY_LIST")
-    catalog['accidentsHash'] = hashmap.newMap(6000011, maptype='PROBING')#3`000,000 books
+    catalog['accidentsHash'] = hashmap.newMap(6000011, maptype='PROBING') # 3`000,000 accidentes
     #Esta tabla de Hash se va a usar para encontrar datos repetidos por lo que sólo va a contener un dato por cada accidente: la fecha exacta
     #La fecha de cada accidente repetido se va a cambiar por unos milisegundos(no afectará mucho la fecha) para que no hayan datos repetidos    
     #Esta es la estrategía usada para evitar la pérdida de datos por sobreescritura
     # ESTA EN PRUEBA
-
-    catalog['accidentsHashByDay'] = hashmap.newMap(919, maptype='CHAINING')#365 (días) * 5 (años) books = 1825
-    catalog['accidentsHashByCity'] = hashmap.newMap(919, maptype='CHAINING')#3225 ciudades en USA (Aprox.)
-
+    catalog["accidentsByDate"] = hashmap.newMap(1830, maptype='CHAINING') # 365 (días) * 5 (años) = 1825 (1830 por si las moscas jaja, también hay años bisiestos y eso)
+    
     return catalog
 
 
@@ -108,25 +106,23 @@ def addAccidentMap (catalog, row):
     
     #Se ingresa cada accidente a la tabla hash con un único valor/llave : su fecha exacta
 
-    #tabla = catalog["accidentsHash"]
+    tabla = catalog["accidentsByDate"]
     arbol = catalog["accidentsTree"]
     accident = newAccident(row)
-    fecha = sacarfecha(accident["start_time"])
+    fecha = int(sacarfecha(accident["start_time"]))
+    
+    DataDistributionByDate(catalog, tabla, row, fecha)
 
-    catalog["accidentsTree"] = map.put(arbol, fecha, accident, greater)
-    #hashmap.put(tabla, fecha, accident, compareByKey)
-    """
     fecha_encontrada = True
     while fecha_encontrada:
-        encontrado = hashmap.contains(tabla, fecha, compareByKey_v2)
+        encontrado = map.contains(arbol, fecha, greater)
         if encontrado:
             fecha += 1
         else:
             catalog["accidentsTree"] = map.put(arbol, fecha, accident, greater)
-            hashmap.put(tabla, fecha, accident, compareByKey)
+            hashmap.put(tabla, fecha, accident, greater)
             fecha_encontrada = False
-    """
-    # EN PRUEBA
+    
 
 def sacarfecha(start_time):
     llave = start_time
@@ -143,6 +139,50 @@ def sacarfecha(start_time):
     fecha = time.mktime(datetime.datetime(anio, mes, dia, horas, minuto, segundo, 0).timetuple())
 
     return fecha
+
+def DataDistributionByDate(catalog, tabla, row, fecha):
+    dia_fecha = (fecha-18000)//86400
+    contiene = hashmap.contains(tabla, dia_fecha, greater)
+    if not contiene:
+        crear_fecha(tabla, dia_fecha)
+    ActualizarFecha(tabla[dia_fecha], row)
+
+def crear_fecha(tabla, dia_fecha):
+    datos = {"size":0, "data":None}
+    datos["data"] = hashmap.newMap(4, maptype='CHAINING') # 4 severidades de accidente
+    hashmap.put(tabla, dia_fecha, datos, greater)
+
+def ActualizarFecha(tabla_fecha, row):
+    tabla_fecha["size"] =+ 1
+    severidad = int(row["Severity"])
+    contiene = hashmap.contains(tabla_fecha, severidad, greater)
+    if not contiene:
+        crear_severidad(tabla_fecha, row, severidad)
+    ActualizarSeveridad(tabla_fecha[severidad], row)
+
+def crear_severidad(tabla_fecha, row, severidad):
+    datos = {"size":None, "data":None, "ciudad_mas_accidentada":None, "num_accidentes_ciudad_mas_accidentada":0}
+    datos["data"] = hashmap.newMap(1613, maptype='CHAINING') # 3225 ciudades en USA (Aprox.)
+    hashmap.put(tabla_fecha, severidad, datos, greater)
+
+def ActualizarSeveridad(tabla_severidad, row):
+    tabla_severidad["size"] += 1
+    ciudad = row["City"]
+    contiene = hashmap.contains(tabla_severidad, ciudad, compareByKey)
+    if not contiene:
+        crear_ciudad(tabla_severidad, ciudad)
+    ActualizarCiudad(tabla_severidad[ciudad])
+
+    if tabla_severidad[ciudad]["accidentes"] > tabla_severidad["num_accidentes_ciudad_mas_accidentada"]:
+       tabla_severidad["num_accidentes_ciudad_mas_accidentada"] = tabla_severidad[ciudad]["accidentes"]
+       tabla_severidad["ciudad_mas_accidentada"] = ciudad
+
+def crear_ciudad(tabla_severidad, ciudad):
+    datos = {"num_accidentes":0}
+    hashmap.put(tabla_severidad, ciudad, datos, compareByKey)
+
+def ActualizarCiudad(tabla_ciudad):
+    tabla_ciudad["accidentes"] += 1
 
 # Funciones de consulta
 
@@ -184,9 +224,6 @@ def selectAccidentMap (catalog, pos):
     return map.select(catalog['accidentsTree'], pos)
 
 # Funciones de comparacion
-
-def compareByKey_v2 (key, element):
-    return  (int(key) == int(element['key'])) 
 
 def compareByKey (key, element):
     return  (key == element['key'])  
