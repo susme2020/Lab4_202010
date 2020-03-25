@@ -55,7 +55,7 @@ def newCatalog():
     #Esta es la estrategía usada para evitar la pérdida de datos por sobreescritura
     # ESTA EN PRUEBA
     catalog["accidentsByDate"] = hashmap.newMap(1830, maptype='CHAINING') # 365 (días) * 5 (años) = 1825 (1830 por si las moscas jaja, también hay años bisiestos y eso)
-    
+
     return catalog
 
 
@@ -111,7 +111,7 @@ def addAccidentMap (catalog, row):
     accident = newAccident(row)
     fecha = int(sacarfecha(accident["start_time"]))
     
-    DataDistributionByDate(catalog, tabla, row, fecha)
+    DataDistributionByDate(tabla, row, fecha)
 
     fecha_encontrada = True
     while fecha_encontrada:
@@ -140,25 +140,26 @@ def sacarfecha(start_time):
 
     return fecha
 
-def DataDistributionByDate(catalog, tabla, row, fecha):
-    dia_fecha = (fecha-18000)//86400
-    contiene = hashmap.contains(tabla, dia_fecha, greater)
+def DataDistributionByDate(tabla, row, fecha):
+    dia_fecha = int((fecha-18000)//86400)
+    contiene = hashmap.contains(tabla, dia_fecha, compareByKey)
     if not contiene:
         crear_fecha(tabla, dia_fecha)
-    ActualizarFecha(tabla[dia_fecha], row)
+    tabla_fecha = hashmap.get(tabla, dia_fecha, compareByKey)
+    ActualizarFecha(tabla_fecha, row)
 
 def crear_fecha(tabla, dia_fecha):
-    datos = {"size":0, "data":None}
+    datos = {"size":0, "data": None}
     datos["data"] = hashmap.newMap(4, maptype='CHAINING') # 4 severidades de accidente
-    hashmap.put(tabla, dia_fecha, datos, greater)
+    hashmap.put(tabla, dia_fecha, datos, compareByKey)
 
 def ActualizarFecha(tabla_fecha, row):
     tabla_fecha["size"] =+ 1
     severidad = int(row["Severity"])
-    contiene = hashmap.contains(tabla_fecha, severidad, greater)
+    contiene = hashmap.contains(tabla_fecha["data"], severidad, compareByKey)
     if not contiene:
-        crear_severidad(tabla_fecha, row, severidad)
-    ActualizarSeveridad(tabla_fecha[severidad], row)
+        crear_severidad(tabla_fecha["data"], row, severidad)
+    ActualizarSeveridad(tabla_fecha["data"][severidad], row)
 
 def crear_severidad(tabla_fecha, row, severidad):
     datos = {"size":None, "data":None, "ciudad_mas_accidentada":None, "num_accidentes_ciudad_mas_accidentada":0}
@@ -168,10 +169,10 @@ def crear_severidad(tabla_fecha, row, severidad):
 def ActualizarSeveridad(tabla_severidad, row):
     tabla_severidad["size"] += 1
     ciudad = row["City"]
-    contiene = hashmap.contains(tabla_severidad, ciudad, compareByKey)
+    contiene = hashmap.contains(tabla_severidad["data"], ciudad, compareByKey)
     if not contiene:
-        crear_ciudad(tabla_severidad, ciudad)
-    ActualizarCiudad(tabla_severidad[ciudad])
+        crear_ciudad(tabla_severidad["data"], ciudad)
+    ActualizarCiudad(tabla_severidad["data"][ciudad])
 
     if tabla_severidad[ciudad]["accidentes"] > tabla_severidad["num_accidentes_ciudad_mas_accidentada"]:
        tabla_severidad["num_accidentes_ciudad_mas_accidentada"] = tabla_severidad[ciudad]["accidentes"]
