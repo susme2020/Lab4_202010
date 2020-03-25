@@ -22,6 +22,7 @@
 
 import config as cf
 from ADT import list as lt
+from ADT import map as hashmap
 from ADT import orderedmap as map
 from DataStructures import listiterator as it
 
@@ -46,8 +47,16 @@ def newCatalog():
 
     """
     catalog = {'accidentsTree':None,'accidentsList':None}
-    catalog['accidentsTree'] = map.newMap ("BST")
+    catalog['accidentsTree'] = map.newMap ("RBT")
     catalog['accidentsList'] = lt.newList("ARRAY_LIST")
+    catalog['accidentsHash'] = hashmap.newMap(6000011, maptype='PROBING')#3`000,000 books
+    #Esta tabla de Hash se va a usar para encontrar datos repetidos por lo que sólo va a contener un dato por cada accidente: la fecha exacta
+    #La fecha de cada accidente repetido se va a cambiar por unos milisegundos(no afectará mucho la fecha) para que no hayan datos repetidos    
+    #Esta es la estrategía usada para evitar la pérdida de datos por sobreescritura
+    # ESTA EN PRUEBA
+
+    catalog['accidentsHashByDay'] = hashmap.newMap(919, maptype='CHAINING')#365 (días) * 5 (años) books = 1825
+    catalog['accidentsHashByCity'] = hashmap.newMap(919, maptype='CHAINING')#3225 ciudades en USA (Aprox.)
 
     return catalog
 
@@ -92,13 +101,32 @@ def addBookMap (catalog, row):
 
 def addAccidentMap (catalog, row):
     """
-    Adiciona accidente al map con key=title
+    Adiciona accidente al map y a la tabla hash
     """
-    accident = newAccident(row)
     #catalog['booksTree'] = map.put(catalog['booksTree'], int(book['book_id']), book, greater)
     #catalog['booksTree']  = map.put(catalog['booksTree'] , book['title'], book, greater)
+    
+    #Se ingresa cada accidente a la tabla hash con un único valor/llave : su fecha exacta
+
+    #tabla = catalog["accidentsHash"]
+    arbol = catalog["accidentsTree"]
+    accident = newAccident(row)
     fecha = sacarfecha(accident["start_time"])
-    catalog["accidentsTree"] = map.put(catalog["accidentsTree"], fecha, accident, greater)
+
+    catalog["accidentsTree"] = map.put(arbol, fecha, accident, greater)
+    #hashmap.put(tabla, fecha, accident, compareByKey)
+    """
+    fecha_encontrada = True
+    while fecha_encontrada:
+        encontrado = hashmap.contains(tabla, fecha, compareByKey_v2)
+        if encontrado:
+            fecha += 1
+        else:
+            catalog["accidentsTree"] = map.put(arbol, fecha, accident, greater)
+            hashmap.put(tabla, fecha, accident, compareByKey)
+            fecha_encontrada = False
+    """
+    # EN PRUEBA
 
 def sacarfecha(start_time):
     llave = start_time
@@ -157,8 +185,11 @@ def selectAccidentMap (catalog, pos):
 
 # Funciones de comparacion
 
+def compareByKey_v2 (key, element):
+    return  (int(key) == int(element['key'])) 
+
 def compareByKey (key, element):
-    return  (key == element['key'] )  
+    return  (key == element['key'])  
 
 def compareByTitle(bookTitle, element):
     return  (bookTitle == element['title'] )

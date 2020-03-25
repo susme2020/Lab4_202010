@@ -82,11 +82,14 @@ def loadAccidents (catalog, sep=','):
     dialect.delimiter=sep
     with open(accidentsfile, encoding="utf-8-sig") as csvfile:
         spamreader = csv.DictReader(csvfile, dialect=dialect)
-        for row in spamreader: 
-            # Se adiciona el libro a la lista de libros
-            model.addAccidentList(catalog, row)
+        for row in spamreader:
             # Se adiciona el libro al mapa de libros (key=title)
             model.addAccidentMap(catalog, row)
+            # Se adiciona el libro a la lista de libros
+            model.addAccidentList(catalog, row)
+            # Se adiciona el SÓLAMENTE la llave a la tabla de hash de los accidentes
+            # Esto ocurre dentro de la función que ingresa los datos al árbol de accidentes
+
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución carga accidentes:",t1_stop-t1_start," segundos")
 
