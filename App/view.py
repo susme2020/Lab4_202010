@@ -24,7 +24,7 @@ import sys
 import controller 
 import csv
 from ADT import list as lt
-from ADT import map as hashmap
+from ADT import hashmap as hashmap
 from ADT import orderedmap as map
 import sys
 

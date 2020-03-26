@@ -23,7 +23,7 @@ import config as cf
 import model
 import csv
 from ADT import list as lt
-from ADT import map as map
+from ADT import hashmap as hashmap
 
 from DataStructures import listiterator as it
 from Sorting import mergesort as sort
