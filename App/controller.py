@@ -77,7 +77,7 @@ def loadAccidents (catalog, sep=','):
     Carga los accidentes del archivo. Se crea un árbol con las fechas como llaves
     """
     t1_start = process_time() #tiempo inicial
-    accidentsfile = cf.data_dir + 'Accidents/us_accidents_small.csv'
+    accidentsfile = cf.data_dir + 'Accidents/us_accidents_dis_2016.csv'
     dialect = csv.excel()
     dialect.delimiter=sep
     with open(accidentsfile, encoding="utf-8-sig") as csvfile:
@@ -164,3 +164,6 @@ def selectAccidentMap(catalog, pos):
 
 def sacarfecha(fecha):
     return model.sacarfecha(fecha)
+
+def greater(key1, key2):
+    return model.greater(key1, key2)

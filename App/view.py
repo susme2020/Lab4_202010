@@ -142,24 +142,33 @@ def main():
 
         elif int(inputs[0])==5: # 5- Consultar total de accidentes ocurridos en una fecha específica. Estos totales se presentarán divididos entre las diferentes severidades de accidente posibles (1 - 4) y se mostrará la ciudad más accidentada por severidad en la fecha dada.
             if datos_cargados:
-                print("Para ejecutar esta opción debe proporcionar una fecha (año, mes, día). Esta fecha debe estar dentro del rango de años de los datos cargados. No tiene ingresar datos de hora, minuto o segundo ya que no se tendrán en cuenta.")
-                fecha = (pedir_fecha()-18000)//86400
-                
-                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
+                print("Para ejecutar esta opción debe proporcionar una fecha (año, mes, día).\nEsta fecha debe estar dentro del rango de años de los datos cargados.\nNo tiene ingresar datos de hora, minuto o segundo ya que no se tendrán en cuenta.")
+                anio = int(input("Año del accidente: "))
+                mes = int(input("Mes(#) del accidente: "))
+                if mes < 10:
+                    mes = "0"+str(mes)
+                dia = int(input("Día(#) del accidente: "))
+                if dia < 10:
+                    dia = "0"+str(dia)
+                hora = 0
+                minuto = 0
+                segundo = 0
+                fecha = str(anio)+"-"+str(mes)+"-"+str(dia)+str(hora)+":"+str(minuto)+":"+str(segundo)
+                fecha = controller.sacarfecha(fecha)
+                fecha = int(((fecha-18000)//86400)-16801)
+
+                print("En la fecha se presentaron ", map.get(catalog["accidentsByDate"], fecha, controller.greater)["size"] , " accidentes.\n")
                 print("SEVERIDAD 1")
-                print("Para la severidad 1 se presentaron ", catalog["accidentsByDate"][fecha][1]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][1]["ciudad_mas_accidentada"])
+                print("Para la severidad 1 se presentaron ", catalog["accidentsByDate"][fecha]["data"][1]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][1]["ciudad_mas_accidentada"])
 
-                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
                 print("SEVERIDAD 2")
-                print("Para la severidad 2 se presentaron ", catalog["accidentsByDate"][fecha][2]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][2]["ciudad_mas_accidentada"])
+                print("Para la severidad 2 se presentaron ", catalog["accidentsByDate"][fecha]["data"][2]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][2]["ciudad_mas_accidentada"])
 
-                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
                 print("SEVERIDAD 3")
-                print("Para la severidad 3 se presentaron ", catalog["accidentsByDate"][fecha][3]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][3]["ciudad_mas_accidentada"])
+                print("Para la severidad 3 se presentaron ", catalog["accidentsByDate"][fecha]["data"][3]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][3]["ciudad_mas_accidentada"])
 
-                print("En la fecha se presentaron ", catalog["accidentsByDate"][fecha]["size"], " accidentes.\n")
                 print("SEVERIDAD 4")
-                print("Para la severidad 4 se presentaron ", catalog["accidentsByDate"][fecha][4]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][4]["ciudad_mas_accidentada"])
+                print("Para la severidad 4 se presentaron ", catalog["accidentsByDate"][fecha]["data"][4]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][4]["ciudad_mas_accidentada"])
             else:
                 print("No ha cargado los datos")
 
@@ -168,5 +177,5 @@ def main():
     sys.exit(0)
 
 if __name__ == "__main__":
-    sys.setrecursionlimit(6000)
+    sys.setrecursionlimit(1000)
     main()
