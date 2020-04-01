@@ -54,7 +54,8 @@ def newCatalog():
     #La fecha de cada accidente repetido se va a cambiar por unos segundos(no afectará mucho la fecha) para que no hayan datos repetidos    
     #Esta es la estrategía usada para evitar la pérdida de datos por sobreescritura
     # ESTA EN PRUEBA
-    catalog["accidentsByDate"] = hashmap.newMap(1831, maptype='CHAINING') # 365 (días) * 5 (años) = 1825 (1830 por si las moscas jaja, también hay años bisiestos y eso)
+    #catalog["accidentsByDate"] = hashmap.newMap(1831, maptype='CHAINING') # 365 (días) * 5 (años) = 1825 (1830 por si las moscas jaja, también hay años bisiestos y eso)
+    catalog["accidentsByDate"] = map.newMap('RBT')
     #catalog["accidentsBySeverity"] = {"size":0, "data": hashmap.newMap(4, maptype='CHAINING')} # 4 Severidades posibles
     #catalog["accidentsByCity"] = {"size":0, "data":hashmap.newMap(1613, maptype='CHAINING'), "ciudad_mas_accidentada":None, "num_accidentes_ciudad_mas_accidentada":0} # 3225 ciudades en USA (Aprox.)
 
@@ -109,11 +110,12 @@ def addAccidentMap (catalog, row):
     #Se ingresa cada accidente a la tabla hash con un único valor/llave : su fecha exacta
 
     tabla = catalog["accidentsByDate"]
+    tabla_todos = catalog["accidentsHash"]
     arbol = catalog["accidentsTree"]
     accident = newAccident(row)
     fecha = int(sacarfecha(accident["start_time"]))
 
-    dia_fecha = int((fecha-18000)//86400)
+    dia_fecha = int(((fecha-18000)//86400)-16801)
     DataDistributionByDate(catalog, tabla, row, dia_fecha)
 
     fecha_encontrada = True
@@ -123,7 +125,7 @@ def addAccidentMap (catalog, row):
             fecha += 1
         else:
             catalog["accidentsTree"] = map.put(arbol, fecha, accident, greater)
-            hashmap.put(tabla, fecha, accident, greater)
+            hashmap.put(tabla_todos, fecha, accident, greater)
             fecha_encontrada = False
     
 
@@ -144,53 +146,26 @@ def sacarfecha(start_time):
     return fecha
 
 def DataDistributionByDate(catalog, tabla, row, dia_fecha):
-    """
-    contiene_fecha = hashmap.get(tabla, dia_fecha, compareByKey)
-    if contiene_fecha != None:
-        contiene_fecha["size"] += 1
-        contiene_severidad = hashmap.get(contiene_fecha["data"], int(row["Severity"]), compareByKey)
-        if contiene_severidad != None:
-            contiene_severidad["size"] += 1
-            contiene_ciudad = hashmap.get(contiene_severidad["data"], row["City"], compareByKey)
-            if contiene_ciudad != None:
-                contiene_ciudad["accidentes"] += 1
-                if contiene_ciudad["accidentes"] < contiene_severidad["num_accidentes_ciudad_mas_accidentada"]:
-                    contiene_severidad["num_accidentes_ciudad_mas_accidentada"] = contiene_ciudad["accidentes"]
-                    contiene_severidad["ciudad_mas_accidentada"] = contiene_ciudad["nombre"]
-            else:
-                hashmap.put(catalog["accidentsByDate"][dia_fecha]["data"][int(row["Severity"])]["data"], row["City"], {"nombre":row["City"], "accidentes":0}, compareByKey)
-                DataDistributionByDate(catalog, tabla, row, dia_fecha)
-        else:
-            datos = hashmap.newMap(1613, maptype='CHAINING')  # 3225 ciudades en USA (Aprox.)
-            hashmap.put(catalog["accidentsByDate"][dia_fecha]["data"], int(row["Severity"]), {"severity":row["Severity"], "size":0, "data":datos, "ciudad_mas_accidentada":None, "num_accidentes_ciudad_mas_accidentada":0}, compareByKey)
-            DataDistributionByDate(catalog, tabla, row, dia_fecha)
-    else:
-        datos = hashmap.newMap(4, maptype='CHAINING') # 4 Severidades posibles
-        hashmap.put(catalog["accidentsByDate"], dia_fecha, {"size":0, "data":datos}, compareByKey)
-        DataDistributionByDate(catalog, tabla, row, dia_fecha)
-    """
-    contiene_fecha = hashmap.get(tabla, dia_fecha, compareByKey)
-    if contiene_fecha != None:
-        contiene_severidad = hashmap.get(contiene_fecha, int(row["Severity"]), compareByKey)
-        if contiene_severidad != None:
-            contiene_ciudad = hashmap.get(contiene_severidad, row["City"], compareByKey)
-            if contiene_ciudad != None:
-                contiene_ciudad["accidentes"] += 1
-                if contiene_ciudad["accidentes"] < contiene_severidad["num_accidentes_ciudad_mas_accidentada"]:
-                    contiene_severidad["num_accidentes_ciudad_mas_accidentada"] = contiene_ciudad["accidentes"]
-                    contiene_severidad["ciudad_mas_accidentada"] = contiene_ciudad["nombre"]
-            else:
-                hashmap.put(catalog["accidentsByDate"][dia_fecha][int(row["Severity"])], row["City"], {"nombre":row["City"], "accidentes":0}, compareByKey)
-                DataDistributionByDate(catalog, tabla, row, dia_fecha)
-        else:
-            datos = hashmap.newMap(1613, maptype='CHAINING')  # 3225 ciudades en USA (Aprox.)
-            hashmap.put(catalog["accidentsByDate"][dia_fecha], int(row["Severity"]), datos, compareByKey)
-            DataDistributionByDate(catalog, tabla, row, dia_fecha)
-    else:
-        datos = hashmap.newMap(4, maptype='CHAINING') # 4 Severidades posibles
-        hashmap.put(catalog["accidentsByDate"], dia_fecha, datos, compareByKey)
-        DataDistributionByDate(catalog, tabla, row, dia_fecha)
-    
+    contiene_fecha = map.get(tabla, dia_fecha, greater)
+    if contiene_fecha == None:
+        datos = {} # 4 Severidades posibles
+        datos[1] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
+        datos[2] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
+        datos[3] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
+        datos[4] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
+        catalog["accidentsByDate"] = map.put(catalog["accidentsByDate"], dia_fecha, {"size":0,"data":datos}, greater)
+        contiene_fecha = map.get(tabla, dia_fecha, greater)
+    contiene_fecha["size"] += 1
+    contiene_fecha["data"][int(row["Severity"])]["size"] += 1
+    contiene_ciudad = hashmap.get(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], compareByKey)
+    if contiene_ciudad == None:
+        datos = {"nombre":row["City"], "accidentes":0}
+        hashmap.put(catalog["accidentsByDate"][dia_fecha]["data"][int(row["Severity"])]["data"], row["City"], datos, compareByKey)
+        contiene_ciudad = hashmap.get(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], compareByKey)    
+    contiene_ciudad["value"]["accidentes"] += 1
+    if contiene_ciudad["value"]["accidentes"] < contiene_fecha["data"][int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"]:
+            contiene_fecha[int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"] = contiene_ciudad["value"]["accidentes"]
+            contiene_fecha[int(row["Severity"])]["ciudad_mas_accidentada"] = contiene_ciudad["value"]["nombre"]
 
 # Funciones de consulta
 

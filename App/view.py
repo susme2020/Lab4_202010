@@ -168,5 +168,5 @@ def main():
     sys.exit(0)
 
 if __name__ == "__main__":
-    sys.setrecursionlimit(11000)
+    sys.setrecursionlimit(6000)
     main()

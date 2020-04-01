@@ -49,7 +49,7 @@ def newMap( capacity, prime ):
     scale = rd.randint(1, prime-1) + 1
     shift = rd.randint(1, prime) 
     table = lt.newList('ARRAY_LIST')
-    for _ in range(capacity):
+    for i in range(capacity):
         bucket = lt.newList()
         lt.addLast (table, bucket)
     hashtable = {'prime': prime, 'capacity': capacity, 'scale':scale, 'shift':shift, 'table':table, 'size':0,'type':'CHAINING'}
