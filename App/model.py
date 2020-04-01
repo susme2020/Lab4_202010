@@ -154,13 +154,13 @@ def DataDistributionByDate(catalog, tabla, row, dia_fecha):
         datos[3] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
         datos[4] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
         catalog["accidentsByDate"] = map.put(catalog["accidentsByDate"], dia_fecha, {"size":0,"data":datos}, greater)
-        contiene_fecha = map.get(tabla, dia_fecha, greater)
+        contiene_fecha = map.get(catalog["accidentsByDate"], dia_fecha, greater)
     contiene_fecha["size"] += 1
     contiene_fecha["data"][int(row["Severity"])]["size"] += 1
     contiene_ciudad = hashmap.get(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], compareByKey)
     if contiene_ciudad == None:
         datos = {"nombre":row["City"], "accidentes":0}
-        hashmap.put(catalog["accidentsByDate"][dia_fecha]["data"][int(row["Severity"])]["data"], row["City"], datos, compareByKey)
+        hashmap.put(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], datos, compareByKey)
         contiene_ciudad = hashmap.get(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], compareByKey)    
     contiene_ciudad["value"]["accidentes"] += 1
     if contiene_ciudad["value"]["accidentes"] < contiene_fecha["data"][int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"]:
