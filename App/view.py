@@ -156,19 +156,22 @@ def main():
                 fecha = str(anio)+"-"+str(mes)+"-"+str(dia)+str(hora)+":"+str(minuto)+":"+str(segundo)
                 fecha = controller.sacarfecha(fecha)
                 fecha = int(((fecha-18000)//86400)-16801)
+                accidentes_año = map.get(catalog["accidentsByDate"], fecha, controller.greater)
+                if accidentes_año == None:
+                    print("No hubo accidentes en esa fecha")
+                else:
+                    print("En la fecha se presentaron ", accidentes_año["size"] , " accidentes.\n")
+                    print("SEVERIDAD 1")
+                    print("Para la severidad 1 se presentaron ", accidentes_año["data"][1]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", accidentes_año["data"][1]["ciudad_mas_accidentada"])
 
-                print("En la fecha se presentaron ", map.get(catalog["accidentsByDate"], fecha, controller.greater)["size"] , " accidentes.\n")
-                print("SEVERIDAD 1")
-                print("Para la severidad 1 se presentaron ", catalog["accidentsByDate"][fecha]["data"][1]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][1]["ciudad_mas_accidentada"])
+                    print("SEVERIDAD 2")
+                    print("Para la severidad 2 se presentaron ", accidentes_año["data"][2]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", accidentes_año["data"][2]["ciudad_mas_accidentada"])
 
-                print("SEVERIDAD 2")
-                print("Para la severidad 2 se presentaron ", catalog["accidentsByDate"][fecha]["data"][2]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][2]["ciudad_mas_accidentada"])
+                    print("SEVERIDAD 3")
+                    print("Para la severidad 3 se presentaron ", accidentes_año["data"][3]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", accidentes_año["data"][3]["ciudad_mas_accidentada"])
 
-                print("SEVERIDAD 3")
-                print("Para la severidad 3 se presentaron ", catalog["accidentsByDate"][fecha]["data"][3]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][3]["ciudad_mas_accidentada"])
-
-                print("SEVERIDAD 4")
-                print("Para la severidad 4 se presentaron ", catalog["accidentsByDate"][fecha]["data"][4]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", catalog["accidentsByDate"][fecha][4]["ciudad_mas_accidentada"])
+                    print("SEVERIDAD 4")
+                    print("Para la severidad 4 se presentaron ", accidentes_año["data"][4]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", accidentes_año["data"][4]["ciudad_mas_accidentada"])
             else:
                 print("No ha cargado los datos")
 

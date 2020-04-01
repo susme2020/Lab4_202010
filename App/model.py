@@ -163,9 +163,9 @@ def DataDistributionByDate(catalog, tabla, row, dia_fecha):
         hashmap.put(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], datos, compareByKey)
         contiene_ciudad = hashmap.get(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], compareByKey)    
     contiene_ciudad["value"]["accidentes"] += 1
-    if contiene_ciudad["value"]["accidentes"] < contiene_fecha["data"][int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"]:
-            contiene_fecha[int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"] = contiene_ciudad["value"]["accidentes"]
-            contiene_fecha[int(row["Severity"])]["ciudad_mas_accidentada"] = contiene_ciudad["value"]["nombre"]
+    if contiene_ciudad["value"]["accidentes"] > contiene_fecha["data"][int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"]:
+        contiene_fecha["data"][int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"] = contiene_ciudad["value"]["accidentes"]
+        contiene_fecha["data"][int(row["Severity"])]["ciudad_mas_accidentada"] = contiene_ciudad["value"]["nombre"]
 
 # Funciones de consulta
 
