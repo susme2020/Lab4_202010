@@ -1,5 +1,5 @@
 import datetime, time
-"""
+
 def sacarfecha(start_time):
     llave = start_time
     llave = llave.replace(" ", "")
@@ -16,12 +16,3 @@ def sacarfecha(start_time):
 
     return fecha
 print(int(((sacarfecha("2019-12-31 23:59:59")-18000)//86400)-16801))
-"""
-diccionario = {}
-for i in range(0, 100):
-    diccionario[i] = str(i)
-
-print(diccionario)
-
-for i in diccionario:
-    print(i)

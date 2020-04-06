@@ -58,6 +58,8 @@ def printMenu():
     
     print("-    REQUERIMIENTO 4    -")
 
+    print("7- Consultar el estado con más accidentes en determinada fecha con su cantidad de accidentes.")
+    
     print("-    REQUERIMIENTO 5    -")
 
     print("-    REQUERIMIENTO 6    -")
@@ -108,22 +110,24 @@ def main():
         printMenu() 
         inputs =input('Seleccione una opción para continuar\n')
         if int(inputs[0])==1: # 1- Cargar información
+            if not datos_cargados:
+                print("Cargando información de los archivos ....")
+                print("Recursion Limit:",sys.getrecursionlimit())
+                catalog = initCatalog ()
+                loadData (catalog)
+                """
+                print ('Arbol Libros cargados: ' + str(map.size(catalog['booksTree'])))
+                print ('Lista libros cargados: ' + str(lt.size(catalog['booksList'])))
+                print ('Altura arbol: ' + str(map.height(catalog['booksTree'])))
+                """
+                print ('Arbol Accidentes cargados: ' + str(map.size(catalog['accidentsTree'])))
+                print ('Hash Accidentes cargados: ' + str(hashmap.size(catalog['accidentsHash'])))
+                print ('Lista Accidentes cargados: ' + str(lt.size(catalog['accidentsList'])))
+                print ('Altura arbol: ' + str(map.height(catalog['accidentsTree'])))
 
-            print("Cargando información de los archivos ....")
-            print("Recursion Limit:",sys.getrecursionlimit())
-            catalog = initCatalog ()
-            loadData (catalog)
-            """
-            print ('Arbol Libros cargados: ' + str(map.size(catalog['booksTree'])))
-            print ('Lista libros cargados: ' + str(lt.size(catalog['booksList'])))
-            print ('Altura arbol: ' + str(map.height(catalog['booksTree'])))
-            """
-            print ('Arbol Accidentes cargados: ' + str(map.size(catalog['accidentsTree'])))
-            print ('Hash Accidentes cargados: ' + str(hashmap.size(catalog['accidentsHash'])))
-            print ('Lista Accidentes cargados: ' + str(lt.size(catalog['accidentsList'])))
-            print ('Altura arbol: ' + str(map.height(catalog['accidentsTree'])))
-
-            datos_cargados = True
+                datos_cargados = True
+            else:
+                print("Los datos ya han sido cargados")
             
         elif int(inputs[0])==2: # 2- Buscar accidente por llave (fecha)
             if datos_cargados:
@@ -241,7 +245,30 @@ def main():
                         print(ciudad, " :", ciudades[ciudad])
             else:
                 print("No ha cargado los datos")
-
+        elif int(inputs[0])==7: # 7- Consultar el estado con más accidentes en determinada fecha con su cantidad de accidentes.
+            if datos_cargados:
+                print("Para ejecutar esta opción debe proporcionar una fecha (año, mes, día).\nLa fecha debe estar dentro del rango de años de los datos cargados.\nNo tiene ingresar datos de hora, minuto o segundo ya que no se tendrán en cuenta.")
+                print("Digite los datos de la fecha:")
+                anio = int(input("Año :"))
+                mes = int(input("Mes(#) :"))
+                if mes < 10:
+                    mes = "0"+str(mes)
+                dia = int(input("Día(#) :"))
+                if dia < 10:
+                    dia = "0"+str(dia)
+                hora = 0
+                minuto = 0
+                segundo = 0
+                fecha = str(anio)+"-"+str(mes)+"-"+str(dia)+str(hora)+":"+str(minuto)+":"+str(segundo)
+                fecha = controller.sacarfecha(fecha)
+                fecha = int(((fecha-18000)//86400)-16801)
+                accidentes_año = map.get(catalog["accidentsByDate"], fecha, controller.greater)
+                if accidentes_año != None:
+                    print("El estado más accidentado en la fecha ingresada es ", accidentes_año["data"]["estado_mas_accidentado"], " con ", accidentes_año["data"]["num_accidentes_estado_mas_accidentado"], " accidentes.")
+                else:
+                    print("No hubo accidentes en la fecha ingresada")
+            else:
+                print("No ha cargado los datos")
         else:
             sys.exit(0)
     sys.exit(0)

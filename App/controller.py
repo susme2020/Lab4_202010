@@ -78,7 +78,8 @@ def loadAccidents (catalog, sep=','):
     """
     t1_start = process_time() #tiempo inicial
     #accidentsfile = cf.data_dir + 'Accidents/us_accidents_dis_2016.csv'
-    accidentsfile = cf.data_dir + 'Accidents/us_accidents_small.csv'
+    #accidentsfile = cf.data_dir + 'Accidents/us_accidents_small.csv'
+    accidentsfile = cf.data_dir + 'Accidents/US_Accidents_Dec19.csv'
     dialect = csv.excel()
     dialect.delimiter=sep
     with open(accidentsfile, encoding="utf-8-sig") as csvfile:
