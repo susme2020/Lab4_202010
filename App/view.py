@@ -42,9 +42,26 @@ def printMenu():
     print("Bienvenido al Laboratorio 4")
     print("1- Cargar información")
     print("2- Buscar accidente por llave (fecha)")
+
+    print("-    REQUERIMIENTO 1    -")
+
     print("3- Consultar cuantos accidentes hubo antes a una fecha - (rank)")
+
+    print("-    REQUERIMIENTO 2    -")
+
     print("4- Consultar accidente por posición")
-    print("5- Consultar total de accidentes ocurridos en una fecha específica. Estos totales se presentarán divididos entre las diferentes severidades de accidente posibles (1 - 4) y se mostrará la ciudad más accidentada por severidad en la fecha dada.") 
+    print("5- Consultar total de accidentes ocurridos en una fecha específica. Estos totales se presentarán divididos entre las diferentes severidades de accidente posibles (1 - 4) y se mostrará la ciudad más accidentada por severidad en la fecha dada.")
+
+    print("-    REQUERIMIENTO 3    -")
+
+    print("6- Consultar total de accidentes ocurridos en un rango de fechas. Estos se mostraran divididos entre las diferentes ciudades.")
+    
+    print("-    REQUERIMIENTO 4    -")
+
+    print("-    REQUERIMIENTO 5    -")
+
+    print("-    REQUERIMIENTO 6    -")
+    
     print("0- Salir")
 
 
@@ -124,7 +141,7 @@ def main():
             if datos_cargados:
                 print("Para consultar tiene que ingresar una fecha")
                 fecha = pedir_fecha()
-                rank = controller.rankAccidentMap(catalog,fecha)
+                rank = controller.rankAccidentMap(catalog, fecha)
                 print("Ocurrieron ", rank, " accidentes antes (rank) de la fecha ingresada")
             else:
                 print("No ha cargado los datos")
@@ -172,6 +189,56 @@ def main():
 
                     print("SEVERIDAD 4")
                     print("Para la severidad 4 se presentaron ", accidentes_año["data"][4]["size"], " accidentes en la fecha ingresada y la ciudad que más accidentes tuvo de este tipo fue: ", accidentes_año["data"][4]["ciudad_mas_accidentada"])
+            else:
+                print("No ha cargado los datos")
+
+        elif int(inputs[0])==6: # 6- Consultar total de accidentes ocurridos en un rango de fechas. Estos se mostraran divididos entre las diferentes ciudades.
+            if datos_cargados:
+                print("Para ejecutar esta opción debe proporcionar un rango de fechas, de modo que debe digitar dos fechas (año, mes, día).\nAl menos una fecha debe estar dentro del rango de años de los datos cargados.\nNo tiene ingresar datos de hora, minuto o segundo ya que no se tendrán en cuenta.")
+                print("Digite los datos para la primera fecha:")
+                anio = int(input("Año :"))
+                mes = int(input("Mes(#) :"))
+                if mes < 10:
+                    mes = "0"+str(mes)
+                dia = int(input("Día(#) :"))
+                if dia < 10:
+                    dia = "0"+str(dia)
+                hora = 0
+                minuto = 0
+                segundo = 0
+                fecha = str(anio)+"-"+str(mes)+"-"+str(dia)+str(hora)+":"+str(minuto)+":"+str(segundo)
+                fecha = controller.sacarfecha(fecha)
+                fecha1 = int(((fecha-18000)//86400)-16801)
+                print("Digite los datos para la segunda fecha:")
+                anio = int(input("Año :"))
+                mes = int(input("Mes(#) :"))
+                if mes < 10:
+                    mes = "0"+str(mes)
+                dia = int(input("Día(#) :"))
+                if dia < 10:
+                    dia = "0"+str(dia)
+                hora = 0
+                minuto = 0
+                segundo = 0
+                fecha = str(anio)+"-"+str(mes)+"-"+str(dia)+str(hora)+":"+str(minuto)+":"+str(segundo)
+                fecha = controller.sacarfecha(fecha)
+                fecha2 = int(((fecha-18000)//86400)-16801)
+                fecha1 = min(fecha1, fecha2)
+                fecha2 = max(fecha1, fecha2)
+                if fecha1 > 1460:
+                    print("Ninguna de las dos fechas estan dentro del rango de datos")
+                else:
+                    if fecha2 > 1460:
+                        fecha2 = 1460
+                info = controller.DaterankAccidentMap(catalog, fecha1, fecha2)
+                ciudades = info["ciudades"]
+                if info["accidentes_totales"] == 0:
+                    print("No hubo accidentes en esa fecha")
+                else:
+                    print("En el rango de fechas dado sucedieron ", info["accidentes_totales"], "accidentes.")
+                    print("A continuación se va a mostrar el número de accidentes por ciudad")
+                    for ciudad in ciudades:
+                        print(ciudad, " :", ciudades[ciudad])
             else:
                 print("No ha cargado los datos")
 

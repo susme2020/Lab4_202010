@@ -77,7 +77,8 @@ def loadAccidents (catalog, sep=','):
     Carga los accidentes del archivo. Se crea un árbol con las fechas como llaves
     """
     t1_start = process_time() #tiempo inicial
-    accidentsfile = cf.data_dir + 'Accidents/us_accidents_dis_2016.csv'
+    #accidentsfile = cf.data_dir + 'Accidents/us_accidents_dis_2016.csv'
+    accidentsfile = cf.data_dir + 'Accidents/us_accidents_small.csv'
     dialect = csv.excel()
     dialect.delimiter=sep
     with open(accidentsfile, encoding="utf-8-sig") as csvfile:
@@ -146,6 +147,13 @@ def rankAccidentMap(catalog, fecha):
     rank=model.rankAccidentMap(catalog, fecha)  
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución buscar accidente (rank):",t1_stop-t1_start," segundos")   
+    return rank
+    
+def DaterankAccidentMap(catalog, fecha1, fecha2):
+    t1_start = process_time() #tiempo inicial
+    rank=model.DaterankAccidentMap(catalog, fecha1, fecha2)  
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución buscar accidentes en un rango de fechas:",t1_stop-t1_start," segundos")   
     return rank
 
 def selectBookMap(catalog, pos):

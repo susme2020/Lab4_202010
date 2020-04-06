@@ -149,10 +149,11 @@ def DataDistributionByDate(catalog, tabla, row, dia_fecha):
     contiene_fecha = map.get(tabla, dia_fecha, greater)
     if contiene_fecha == None:
         datos = {} # 4 Severidades posibles
-        datos[1] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
-        datos[2] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
-        datos[3] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
-        datos[4] = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None}
+        info = {"size":0, "data": hashmap.newMap(1613, maptype='CHAINING'), "num_accidentes_ciudad_mas_accidentada": 0, "ciudad_mas_accidentada": None, "num_ciudades_accidentadas": 0, "ciudades_accidentadas":[]}
+        datos[1] = info
+        datos[2] = info
+        datos[3] = info
+        datos[4] = info
         catalog["accidentsByDate"] = map.put(catalog["accidentsByDate"], dia_fecha, {"size":0,"data":datos}, greater)
         contiene_fecha = map.get(catalog["accidentsByDate"], dia_fecha, greater)
     contiene_fecha["size"] += 1
@@ -161,7 +162,10 @@ def DataDistributionByDate(catalog, tabla, row, dia_fecha):
     if contiene_ciudad == None:
         datos = {"nombre":row["City"], "accidentes":0}
         hashmap.put(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], datos, compareByKey)
-        contiene_ciudad = hashmap.get(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], compareByKey)    
+        contiene_ciudad = hashmap.get(contiene_fecha["data"][int(row["Severity"])]["data"], row["City"], compareByKey)
+        contiene_fecha["data"][int(row["Severity"])]["num_ciudades_accidentadas"] += 1
+        contiene_fecha["data"][int(row["Severity"])]["ciudades_accidentadas"].append(row["City"])
+
     contiene_ciudad["value"]["accidentes"] += 1
     if contiene_ciudad["value"]["accidentes"] > contiene_fecha["data"][int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"]:
         contiene_fecha["data"][int(row["Severity"])]["num_accidentes_ciudad_mas_accidentada"] = contiene_ciudad["value"]["accidentes"]
@@ -193,6 +197,32 @@ def rankAccidentMap (catalog, fecha):
     Retorna la cantidad de accidentes que ocurrieron antes que la fecha obtenida por parámetro
     """
     return map.rank(catalog['accidentsTree'], fecha, greater)
+
+def DaterankAccidentMap(catalog, fecha1, fecha2):
+    """
+    Retorna un diccionario con la cantidad de accidentes en el rango de fechas (desde fecha #1 a fecha #2) y con el número de accidentes por ciudad en ese intervalo.
+    """
+    info = {}
+    accidentes_totales = 0
+    ciudades = {}
+    for fecha in range(fecha1, fecha2 + 1):
+        for severidad in range(1, 5):
+            accidentes = map.get(catalog["accidentsByDate"], fecha, greater)
+            if accidentes != None:
+                accidentes_totales += accidentes["size"]
+                ciudades_totales = accidentes["data"][severidad]["data"]
+                if ciudades_totales != None:
+                    llaves_ciudades = accidentes["data"][severidad]["ciudades_accidentadas"]
+                    for llave in llaves_ciudades:
+                        if ciudades.get(llave) == None:
+                            get = hashmap.get(ciudades_totales, llave, compareByKey)
+                            ciudades[llave] = get["value"]["accidentes"]
+                        else:
+                            get = hashmap.get(ciudades_totales, llave, compareByKey)
+                            ciudades[llave] += get["value"]["accidentes"]
+    info["accidentes_totales"] = accidentes_totales
+    info["ciudades"] = ciudades
+    return info
 
 def selectBookMap (catalog, pos):
     """
